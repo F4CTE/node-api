@@ -1,5 +1,8 @@
 import express from 'express'
 import * as movieController from '../controllers/mediaController.js'
+import {authUser} from "../controllers/userController.js";
+import isAdmin from "../middlewares/isAdmin.js";
+import auth from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -10,7 +13,7 @@ const router = express.Router();
  *   post:
  *     summary: create a movie
  */
-router.post('/api/media', movieController.createMedia);
+router.post('/api/media', auth, isAdmin, movieController.createMedia);
 
 /**
  * @swagger
@@ -34,7 +37,7 @@ router.get('/api/media/:id', movieController.getMediaById);
  *   put:
  *     summary: Update a movie
  */
-router.put('/api/media/:id', movieController.updateMedia);
+router.put('/api/media/:id', auth, isAdmin, movieController.updateMedia);
 
 /**
  * @swagger
@@ -42,6 +45,6 @@ router.put('/api/media/:id', movieController.updateMedia);
  *   delete:
  *     summary: delete a movie
  */
-router.delete('/api/media/:id', movieController.deleteMedia);
+router.delete('/api/media/:id', auth, isAdmin, movieController.deleteMedia);
 
 export default router

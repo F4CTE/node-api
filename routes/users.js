@@ -1,5 +1,9 @@
 import express from 'express'
 import * as userController from '../controllers/userController.js'
+import isAdmin from "../middlewares/isAdmin.js";
+import auth from "../middlewares/auth.js";
+import eitherMiddleware from "../middlewares/eitherMiddleware.js";
+import isConcerned from "../middlewares/isConcerned.js";
 
 const router = express.Router();
 
@@ -25,7 +29,7 @@ router.post('/register', userController.registerUser);
  *   get:
  *     summary: Retrieve a list of all users
  */
-router.get('/', userController.getAllUsers)
+router.get('/', auth, isAdmin, userController.getAllUsers)
 
 /**
  * @swagger
@@ -33,7 +37,7 @@ router.get('/', userController.getAllUsers)
  *   get:
  *     summary: Retrieve a user by its id
  */
-router.get('/:id', userController.getUserById);
+router.get('/:id', auth, userController.getUserById);
 
 /**
  * @swagger
@@ -41,7 +45,7 @@ router.get('/:id', userController.getUserById);
  *   put:
  *     summary: update a user
  */
-router.put('/:id', userController.updateUser);
+router.put('/:id', auth, eitherMiddleware(isAdmin, isConcerned), userController.updateUser);
 
 /**
  * @swagger
@@ -49,6 +53,6 @@ router.put('/:id', userController.updateUser);
  *   get:
  *     summary: delete a user
  */
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', auth, eitherMiddleware(isAdmin, isConcerned),userController.deleteUser);
 
 export default router
